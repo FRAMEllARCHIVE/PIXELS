@@ -76,23 +76,26 @@
         let isErasing = false;
         let currentColor = "rgba(0, 0, 0, 1)";
 
-        function createLayer(name = `Layer ${layers.length + 1}`) {
-            const canvas = document.createElement("canvas");
-            canvas.width = cols * pixelSize;
-            canvas.height = rows * pixelSize;
-            canvas.style.zIndex = layers.length;
-            canvasContainer.appendChild(canvas);
+function createLayer() {
+    const name = prompt("Enter a name for the new layer:", `Layer ${layers.length + 1}`);
+    const layerName = name ? name : `Layer ${layers.length + 1}`;
 
-            const ctx = canvas.getContext("2d");
-            layers.push({ name, canvas, ctx });
+    const canvas = document.createElement("canvas");
+    canvas.width = cols * pixelSize;
+    canvas.height = rows * pixelSize;
+    canvas.style.zIndex = layers.length;
+    canvasContainer.appendChild(canvas);
 
-            const option = document.createElement("option");
-            option.value = layers.length - 1;
-            option.textContent = name;
-            layerSelect.appendChild(option);
-            layerSelect.value = layers.length - 1;
-            switchLayer();
-        }
+    const ctx = canvas.getContext("2d");
+    layers.push({ name: layerName, canvas, ctx });
+
+    const option = document.createElement("option");
+    option.value = layers.length - 1;
+    option.textContent = layerName;
+    layerSelect.appendChild(option);
+    layerSelect.value = layers.length - 1;
+    switchLayer();
+}
 
         function switchLayer() {
             const index = layerSelect.value;
@@ -200,6 +203,8 @@
             }
         });
 
+
+        
         exportImage.addEventListener("click", exportArtwork);
 
         layerSelect.addEventListener("change", switchLayer);
