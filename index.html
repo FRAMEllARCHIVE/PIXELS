@@ -112,6 +112,7 @@
         function switchLayer() {
             const index = layerSelect.value;
             currentLayer = layers[index];
+            console.log("Switched to layer:", currentLayer.name);
         }
 
         function drawPixel(x, y) {
@@ -167,27 +168,40 @@
         function saveStateForUndo() {
             if (!currentLayer) return;
             const canvasData = currentLayer.canvas.toDataURL();
+            console.log("Saving state for undo:", canvasData);
             undoHistory.push(canvasData);
-            redoHistory = [];
+            redoHistory = [];  // Clear redo history when a new action is taken
         }
 
         function undo() {
             if (undoHistory.length > 0) {
                 const lastState = undoHistory.pop();
+                console.log("Undo action triggered. Restoring state:", lastState);
                 redoHistory.push(currentLayer.canvas.toDataURL());
                 const img = new Image();
                 img.src = lastState;
-                img.onload = () => currentLayer.ctx.drawImage(img, 0, 0);
+                img.onload = () => {
+                    currentLayer.ctx.clearRect(0, 0, currentLayer.canvas.width, currentLayer.canvas.height);
+                    currentLayer.ctx.drawImage(img, 0, 0);
+                };
+            } else {
+                console.log("No more states to undo.");
             }
         }
 
         function redo() {
             if (redoHistory.length > 0) {
                 const lastState = redoHistory.pop();
+                console.log("Redo action triggered. Restoring state:", lastState);
                 undoHistory.push(currentLayer.canvas.toDataURL());
                 const img = new Image();
                 img.src = lastState;
-                img.onload = () => currentLayer.ctx.drawImage(img, 0, 0);
+                img.onload = () => {
+                    currentLayer.ctx.clearRect(0, 0, currentLayer.canvas.width, currentLayer.canvas.height);
+                    currentLayer.ctx.drawImage(img, 0, 0);
+                };
+            } else {
+                console.log("No more states to redo.");
             }
         }
 
