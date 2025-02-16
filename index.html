@@ -4,27 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixels</title>
-    <!-- Font Awesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f4f4f4;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
+
         .toolbar {
             margin-bottom: 10px;
         }
+
         button, input {
             margin: 5px;
             padding: 10px;
             font-size: 16px;
         }
+
         .canvas-container {
             position: relative;
             display: inline-block;
             border: 1px solid black;
         }
+
         canvas {
             position: absolute;
             top: 0;
@@ -32,6 +41,7 @@
             background-color: transparent;
             image-rendering: pixelated;
         }
+
         #gridCanvas {
             pointer-events: none;
         }
@@ -44,15 +54,10 @@
         <input type="color" id="colorPicker">
         <input type="range" id="alphaSlider" min="0" max="1" step="0.01" value="1">
         <span id="alphaValue">1.00</span>
-        <!-- Pencil Tool Icon -->
         <button id="pencilTool"><i class="fas fa-pencil-alt"></i></button>
-        <!-- Eraser Tool Icon -->
         <button id="eraserTool"><i class="fas fa-eraser"></i></button>
-        <!-- Add Layer Icon -->
         <button id="addLayer"><i class="fas fa-plus-circle"></i></button>
-        <!-- Remove Layer Icon -->
         <button id="removeLayer"><i class="fas fa-minus-circle"></i></button>
-        <!-- Export Icon -->
         <button id="exportImage"><i class="fas fa-download"></i></button>
         <select id="layerSelect"></select>
     </div>
