@@ -272,6 +272,25 @@ canvas {
         setupGrid();
         createLayer();
 
+        canvasContainer.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    isDrawing = true;
+    saveStateForUndo();
+    const x = Math.floor(e.touches[0].clientX / pixelSize);
+    const y = Math.floor(e.touches[0].clientY / pixelSize);
+    drawPixel(x, y);
+}, { passive: false });
+
+canvasContainer.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // Prevent scrolling
+    if (!isDrawing) return;
+    const x = Math.floor(e.touches[0].clientX / pixelSize);
+    const y = Math.floor(e.touches[0].clientY / pixelSize);
+    drawPixel(x, y);
+}, { passive: false });
+
+document.addEventListener("touchend", () => isDrawing = false);
+
     </script>
 </body>
 </html>
