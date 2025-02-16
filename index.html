@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Art Editor</title>
+    <title>Pixels</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,7 +36,7 @@
     </style>
 </head>
 <body>
-    <h1>Pixel Art Editor</h1>
+    <h1>Pixels</h1>
 
     <div class="toolbar">
         <input type="color" id="colorPicker">
@@ -44,7 +44,6 @@
         <span id="alphaValue">1.00</span>
         <button id="pencilTool">Pencil</button>
         <button id="eraserTool">Eraser</button>
-        <button id="clearCanvas">Clear</button>
         <button id="addLayer">Add Layer</button>
         <button id="removeLayer">Remove Layer</button>
         <button id="exportImage">Export</button>
@@ -188,10 +187,6 @@
 
         pencilTool.addEventListener("click", () => isErasing = false);
         eraserTool.addEventListener("click", () => isErasing = true);
-
-        clearCanvas.addEventListener("click", () => {
-            if (currentLayer) currentLayer.ctx.clearRect(0, 0, canvas.width, canvas.height);
-        });
 
         addLayer.addEventListener("click", createLayer);
         removeLayer.addEventListener("click", () => {
