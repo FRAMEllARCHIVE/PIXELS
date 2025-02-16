@@ -54,6 +54,8 @@
         <button id="addLayer"><i class="fas fa-plus-circle"></i></button>
         <button id="removeLayer"><i class="fas fa-minus-circle"></i></button>
         <button id="exportImage"><i class="fas fa-download"></i></button>
+        <button id="undoButton"><i class="fas fa-undo"></i></button>
+        <button id="redoButton"><i class="fas fa-redo"></i></button>
         <select id="layerSelect"></select>
     </div>
 
@@ -75,12 +77,16 @@
         const removeLayer = document.getElementById("removeLayer");
         const exportImage = document.getElementById("exportImage");
         const layerSelect = document.getElementById("layerSelect");
+        const undoButton = document.getElementById("undoButton");
+        const redoButton = document.getElementById("redoButton");
 
         let layers = [];
         let currentLayer = null;
         let isDrawing = false;
         let isErasing = false;
         let currentColor = "rgba(0, 0, 0, 1)";
+        let undoHistory = [];
+        let redoHistory = [];
 
         function createLayer() {
             const name = prompt("Enter a name for the new layer:", `Layer ${layers.length + 1}`);
@@ -158,8 +164,36 @@
             link.click();
         }
 
+        function saveStateForUndo() {
+            if (!currentLayer) return;
+            const canvasData = currentLayer.canvas.toDataURL();
+            undoHistory.push(canvasData);
+            redoHistory = [];
+        }
+
+        function undo() {
+            if (undoHistory.length > 0) {
+                const lastState = undoHistory.pop();
+                redoHistory.push(currentLayer.canvas.toDataURL());
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => currentLayer.ctx.drawImage(img, 0, 0);
+            }
+        }
+
+        function redo() {
+            if (redoHistory.length > 0) {
+                const lastState = redoHistory.pop();
+                undoHistory.push(currentLayer.canvas.toDataURL());
+                const img = new Image();
+                img.src = lastState;
+                img.onload = () => currentLayer.ctx.drawImage(img, 0, 0);
+            }
+        }
+
         canvasContainer.addEventListener("mousedown", (e) => {
             isDrawing = true;
+            saveStateForUndo();
             const x = Math.floor(e.offsetX / pixelSize);
             const y = Math.floor(e.offsetY / pixelSize);
             drawPixel(x, y);
@@ -212,6 +246,9 @@
         exportImage.addEventListener("click", exportArtwork);
 
         layerSelect.addEventListener("change", switchLayer);
+
+        undoButton.addEventListener("click", undo);
+        redoButton.addEventListener("click", redo);
 
         setupGrid();
         createLayer();
