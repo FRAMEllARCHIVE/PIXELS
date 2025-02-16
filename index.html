@@ -25,26 +25,26 @@
             padding: 10px;
             font-size: 16px;
         }
-.canvas-container {
-    position: relative;
-    display: inline-block;
-    border: 1px solid black;
-    width: 640px;
-    height: 640px;
-    margin: 0 auto;
-}
+        .canvas-container {
+            position: relative;
+            display: inline-block;
+            border: 1px solid black;
+            width: 640px;
+            height: 640px;
+            margin: 0 auto;
+        }
 
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: transparent;
-    image-rendering: pixelated;
-}
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: transparent;
+            image-rendering: pixelated;
+        }
 
-#gridCanvas {
-    pointer-events: none;
-}
+        #gridCanvas {
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -175,7 +175,7 @@ canvas {
             const canvasData = currentLayer.canvas.toDataURL();
             console.log("Saving state for undo:", canvasData);
             undoHistory.push(canvasData);
-            redoHistory = [];  // Clear redo history when a new action is taken
+            redoHistory = [];
         }
 
         function undo() {
@@ -213,15 +213,17 @@ canvas {
         canvasContainer.addEventListener("mousedown", (e) => {
             isDrawing = true;
             saveStateForUndo();
-            const x = Math.floor(e.offsetX / pixelSize);
-            const y = Math.floor(e.offsetY / pixelSize);
+            const rect = canvasContainer.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.clientY - rect.top) / pixelSize);
             drawPixel(x, y);
         });
 
         canvasContainer.addEventListener("mousemove", (e) => {
             if (!isDrawing) return;
-            const x = Math.floor(e.offsetX / pixelSize);
-            const y = Math.floor(e.offsetY / pixelSize);
+            const rect = canvasContainer.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.clientY - rect.top) / pixelSize);
             drawPixel(x, y);
         });
 
@@ -273,24 +275,25 @@ canvas {
         createLayer();
 
         canvasContainer.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // Prevent scrolling
-    isDrawing = true;
-    saveStateForUndo();
-    const x = Math.floor(e.touches[0].clientX / pixelSize);
-    const y = Math.floor(e.touches[0].clientY / pixelSize);
-    drawPixel(x, y);
-}, { passive: false });
+            e.preventDefault();
+            isDrawing = true;
+            saveStateForUndo();
+            const rect = canvasContainer.getBoundingClientRect();
+            const x = Math.floor((e.touches[0].clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.touches[0].clientY - rect.top) / pixelSize);
+            drawPixel(x, y);
+        }, { passive: false });
 
-canvasContainer.addEventListener("touchmove", (e) => {
-    e.preventDefault(); // Prevent scrolling
-    if (!isDrawing) return;
-    const x = Math.floor(e.touches[0].clientX / pixelSize);
-    const y = Math.floor(e.touches[0].clientY / pixelSize);
-    drawPixel(x, y);
-}, { passive: false });
+        canvasContainer.addEventListener("touchmove", (e) => {
+            e.preventDefault();
+            if (!isDrawing) return;
+            const rect = canvasContainer.getBoundingClientRect();
+            const x = Math.floor((e.touches[0].clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.touches[0].clientY - rect.top) / pixelSize);
+            drawPixel(x, y);
+        }, { passive: false });
 
-document.addEventListener("touchend", () => isDrawing = false);
-
+        document.addEventListener("touchend", () => isDrawing = false);
     </script>
 </body>
 </html>
